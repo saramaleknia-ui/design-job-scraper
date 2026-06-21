@@ -15,7 +15,7 @@ try:
 except ImportError:
     SHEETS_AVAILABLE = False
 
-# ─── Logging ──────────────────────────────────────────────────────────────────
+# ─── Logging ──────────────────────────────────────────────────────────
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(message)s",
@@ -23,7 +23,7 @@ logging.basicConfig(
 )
 log = logging.getLogger(__name__)
 
-# ─── Config ───────────────────────────────────────────────────────────────────
+# ─── Config ───────────────────────────────────────────────────────────
 RAPIDAPI_KEY       = os.environ["RAPIDAPI_KEY"]
 TELEGRAM_TOKEN     = os.environ["TELEGRAM_BOT_TOKEN"]
 TELEGRAM_CHAT_ID   = os.environ["TELEGRAM_CHAT_ID"]
@@ -35,7 +35,7 @@ SEEN_JOBS_FILE    = Path("seen_jobs.txt")
 MAX_SEEN_JOBS     = 2000   # حداکثر تعداد ID ذخیره شده (جلوگیری از بزرگ شدن فایل)
 MAX_JOBS_PER_RUN  = 15     # حداکثر آگهی ارسالی در هر اجرا
 
-# ─── کلمات جستجو ──────────────────────────────────────────────────────────────
+# ─── کلمات جستجو ──────────────────────────────────────────────────────
 SEARCH_QUERIES = [
     "UI UX designer remote",
     "product designer remote",
@@ -44,7 +44,7 @@ SEARCH_QUERIES = [
     "ux researcher remote",
 ]
 
-# ─── کلمات ممنوعه (Blacklist) ──────────────────────────────────────────────────
+# ─── کلمات ممنوعه (Blacklist) ─────────────────────────────────────────────────
 BLACKLIST_KEYWORDS = [
     "us residents only",
     "must reside in us",
@@ -55,22 +55,21 @@ BLACKLIST_KEYWORDS = [
     "agency",
     "full stack",
     "manager",
-     "lead",
-     "head of",
-     "vp of",
-     "vice president",
-     "uk only",
-"europe only", 
-"australia only",
-"must be based in",
-"unpaid",
-"internship",
-"volunteer",
-"commission only",
+    "lead",
+    "head of",
+    "vp of",
+    "vice president",
+    "uk only",
+    "europe only",
+    "australia only",
+    "unpaid",
+    "internship",
+    "volunteer",
+    "commission only",
 ]
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # حافظه دائمی — seen_jobs.txt
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def load_seen_jobs() -> set:
     """بارگذاری ID های قبلاً ارسال‌شده از فایل کش"""
@@ -91,9 +90,9 @@ def save_seen_jobs(seen: set) -> None:
     log.info(f"Saved {len(ids_list)} job IDs to cache")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # JSearch API
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def search_jobs(query: str, retries: int = 3) -> list:
     """جستجو با retry خودکار و مدیریت rate limit"""
@@ -148,9 +147,9 @@ def search_jobs(query: str, retries: int = 3) -> list:
     return []
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # فیلتر Blacklist
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def is_blacklisted(job: dict) -> bool:
     description = (job.get("job_description") or "").lower()
@@ -164,9 +163,9 @@ def is_blacklisted(job: dict) -> bool:
     return False
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # Telegram
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def send_telegram(text: str) -> bool:
     url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -237,9 +236,9 @@ def format_job(job: dict) -> str:
     return "\n".join(lines)
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # Google Sheets (اختیاری)
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def get_sheets_client():
     if not SHEETS_AVAILABLE:
@@ -301,9 +300,9 @@ def append_to_sheet(client, job: dict) -> None:
         log.error(f"Sheet append error: {e}")
 
 
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 # Main
-# ══════════════════════════════════════════════════════════════════════════════
+# ════════════════════════════════════════════════════════════════
 
 def main():
     now = datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M UTC")
@@ -365,7 +364,7 @@ def main():
 
     log.info(f"Summary → new: {len(unique_jobs)} | blacklisted: {blacklisted} | already seen: {already_seen} | errors: {errors}")
 
-    # ─── ارسال به تلگرام ───────────────────────────────────────────────────
+    # ─── ارسال به تلگرام ──────────────────────────────────────────────────
     if not unique_jobs:
         send_telegram(
             f"🔍 <b>گزارش روزانه</b>\n"
